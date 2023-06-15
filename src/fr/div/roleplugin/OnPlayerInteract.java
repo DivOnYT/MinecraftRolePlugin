@@ -1,4 +1,4 @@
-package fr.div.nukamcplugin;
+package fr.div.roleplugin;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

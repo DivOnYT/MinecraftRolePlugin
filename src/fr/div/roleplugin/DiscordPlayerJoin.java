@@ -1,7 +1,12 @@
-package fr.div.nukamcplugin;
+package fr.div.roleplugin;
 
 
-import fr.div.nukamcplugin.Badge;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+
+
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -31,6 +36,12 @@ public class DiscordPlayerJoin implements Listener {
 
 
 
+
+
+    String token = "Your BOT Token HERE";
+
+
+    public JDA jda = JDABuilder.createLight(token).build();
 
     DiscordRolesPlugin discordRolesPlugin;
     private int animationIndex = 0;
@@ -81,6 +92,7 @@ public class DiscordPlayerJoin implements Listener {
         } else {
         	playerBadge = badge.getBadge(roleSystem.getRole(playerName));
         }
+
 
 
         if (discordRolesPlugin.verifiedPlayers.contains(playerName)) {
@@ -157,7 +169,7 @@ public class DiscordPlayerJoin implements Listener {
 
         }else {
 
-            player.setPlayerListName(playerBadge + ChatColor.DARK_GRAY + "[Wastelander] " + playerName);
+            player.setPlayerListName(playerBadge  + ChatColor.DARK_GRAY + "[Wastelander] " + playerName);
             roleSystem.addRole(playerName, "Wastelander");
 
         }

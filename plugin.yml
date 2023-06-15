@@ -1,6 +1,6 @@
 name: discordRolesPlugin
 version: '${project.version}'
-main: fr.div.nukamcplugin.DiscordRolesPlugin
+main: fr.div.roleplugin.DiscordRolesPlugin
 api-version: 1.16
 commands:
   hello:

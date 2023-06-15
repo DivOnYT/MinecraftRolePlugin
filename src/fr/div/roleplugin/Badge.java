@@ -1,4 +1,4 @@
-package fr.div.nukamcplugin;
+package fr.div.roleplugin;
 
 import java.util.HashMap;
 

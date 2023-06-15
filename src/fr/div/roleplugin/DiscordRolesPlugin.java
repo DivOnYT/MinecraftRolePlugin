@@ -1,5 +1,10 @@
-package fr.div.nukamcplugin;
+package fr.div.roleplugin;
+import java.awt.Color;
 import java.util.*;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -24,6 +29,7 @@ public final class DiscordRolesPlugin extends JavaPlugin {
 
     List<String> verifiedPlayers;
     String fileName = "verified_players.txt";
+    JDA jda;
     @Override
     public void onEnable() {
 
@@ -55,6 +61,7 @@ public final class DiscordRolesPlugin extends JavaPlugin {
         roleSystem = new RoleSystem(this);
         discordPlayerJoin = new DiscordPlayerJoin(roleSystem, this);
         onPlayerInteract = new OnPlayerInteract();
+        jda = discordPlayerJoin.jda;
         // Register listener
 
         getServer().getPluginManager().registerEvents(discordPlayerJoin, this);
@@ -74,11 +81,25 @@ public final class DiscordRolesPlugin extends JavaPlugin {
                 throw new RuntimeException(e);
             }
 
+            TextChannel channel = jda.getTextChannelById("1100491285124632677");
+
+
+
+            MessageEmbed embed = new EmbedBuilder()
+                    .setTitle("-- [Server] --")
+                    .setDescription("-- " + "***" +  "Server Start Up!" + "***" + " --")
+                    .setFooter("-- --------------------------------- --")
+                    .setColor(Color.green)
+                    .build();
+
+            channel.sendMessageEmbeds(embed).queue();
+
         }
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        jda = discordPlayerJoin.jda;
 
 
 
@@ -103,6 +124,35 @@ public final class DiscordRolesPlugin extends JavaPlugin {
                         player.sendMessage(ChatColor.BLUE + "-- ----------------------------- --");
 
                         getLogger().info("A development announcement has been triggered by: " + sender.getName() + ": "+ text);
+                        TextChannel channel = jda.getTextChannelById("1100491285124632677");
+
+
+                        if(channel != null) {
+                            getLogger().info("Sending embed.");
+
+                            MessageEmbed embed = new EmbedBuilder()
+                                    .setTitle("-- [Development Announcement] --")
+                                    .setDescription("-- " + "**" +  text + "**" + " --")
+                                    .setFooter("-- " + "Announced by: " + sender.getName() + " --")
+                                    .setColor(Color.blue)
+                                    .build();
+
+                            if (channel.getLatestMessageIdLong() != 0 && channel.retrieveMessageById(channel.getLatestMessageIdLong()).complete().getEmbeds().contains(embed)) {
+                                return true;
+                            } else {
+                                channel.sendMessageEmbeds(embed).queue();
+                            }
+                            getLogger().info("Embed sent.");
+
+                        }else{
+
+                            getLogger().info("This channel was not found.");
+
+                        }
+
+
+
+
 
 
                     }
@@ -142,6 +192,39 @@ public final class DiscordRolesPlugin extends JavaPlugin {
                         player.sendMessage(ChatColor.DARK_RED + "-- ----------------------------- --");
 
                         getLogger().info("A server announcement has been triggered by: " + sender.getName() + ": "+ text);
+                        TextChannel channel = jda.getTextChannelById("1100491285124632677");
+
+
+                        if(channel != null) {
+                            getLogger().info("Sending embed.");
+
+
+
+
+                            MessageEmbed embed = new EmbedBuilder()
+                                    .setTitle("-- [Server Announcement] --")
+                                    .setDescription("-- " + "**" +  text + "**" + " --")
+                                    .setFooter("-- " + "Announced by: " + sender.getName() + " --")
+                                    .setColor(Color.RED)
+                                    .build();
+
+                            if (channel.getLatestMessageIdLong() != 0 && channel.retrieveMessageById(channel.getLatestMessageIdLong()).complete().getEmbeds().contains(embed)) {
+                                return true;
+                            } else {
+                                channel.sendMessageEmbeds(embed).queue();
+                            }
+
+
+                            getLogger().info("Embed sent.");
+
+                        }else{
+
+                            getLogger().info("This channel was not found.");
+
+                        }
+
+
+
 
 
 
@@ -222,6 +305,45 @@ public final class DiscordRolesPlugin extends JavaPlugin {
                 if (!verifiedPlayers.contains(player.getName() + ": " + args[0] + " :")) {
 
                     getLogger().info(args[0]);
+                    Guild guild = jda.getGuildById("886233018895843328");
+
+
+                    guild.retrieveMemberById(args[0]).queue(member -> {
+                        if (member != null) {
+                            Random rand = new Random();
+                            int num = rand.nextInt(900000) + 100000;
+
+                            getLogger().info(member.toString());
+                            User user = member.getUser();
+                            player.sendMessage(user.getName());
+
+                            awaitingVerification.add(player.getName() + ": " + num);
+
+                            getLogger().info(awaitingVerification.toString());
+
+
+                            user.openPrivateChannel().queue(channel -> {
+                                channel.sendMessage("Hello, " + user.getName() + "! " + "Your verification code is: " + num + " , this code will expire in 5 minutes, if you did not request this then please just ignore this message. You can also report it to our server at https://discord.gg/nukamc-minecraft-server-886233018895843328 , verification started by: " + player.getName()).queue();
+                                player.sendMessage(ChatColor.GREEN + "[Verification] Verification code sent to: " + user.getName());
+                                getLogger().info("Starting verification for: " + player.getName() + "Discord account: (" + user.getName() + ": " + user.getId() + ")");
+                                Timer timer = new Timer();
+                                timer.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        if(awaitingVerification.contains(player.getName() + ": " + num)) {
+
+                                            awaitingVerification.remove(player.getName() + ": " + num);
+
+                                            getLogger().info("Players awaiting verification: " + awaitingVerification.toString());
+                                            getLogger().info("Removed: " + player.getName() + ": " + num + " , from awaiting verification. Reason: Time expired.");
+
+                                        }
+
+                                    }
+                                }, 5 * 60 * 1000);
+                            });
+                        }
+                    });
 
                 }else{
 
@@ -262,6 +384,100 @@ public final class DiscordRolesPlugin extends JavaPlugin {
             if(args.length > 0) {
 
                 if(verifiedPlayers.contains(player.getName() + ": " + args[0] + " :")) {
+
+
+                    Guild guild = jda.getGuildById("886233018895843328");
+
+
+                    guild.retrieveMemberById(args[0]).queue(member -> {
+                        if (member != null) {
+                            Role highestRole = member.getRoles().stream().min((r1, r2) -> r2.getPosition() - r1.getPosition()).orElse(null);
+                            player.sendMessage(ChatColor.RED + "[Verification] Refreshing roles...");
+                            if(highestRole != null) {
+
+                                if(highestRole.getName().equals("Developer")) {
+
+
+
+                                    roleSystem.addRole(player.getName(), "Developer");
+
+                                    player.setPlayerListName(ChatColor.BLUE + "[Developer] " + ChatColor.BLUE + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                } else if (highestRole.getName().equals("Moderator")) {
+
+                                    roleSystem.addRole(player.getName(), "Moderator");
+
+                                    player.setPlayerListName(ChatColor.YELLOW + "[Moderator] " + ChatColor.YELLOW + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                }else if (highestRole.getName().equals("Super Moderator")) {
+
+                                    roleSystem.addRole(player.getName(), "Super-Moderator");
+
+                                    player.setPlayerListName(ChatColor.GOLD + "[Super-Moderator] " + ChatColor.GOLD + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                }else if (highestRole.getName().equals("Owner")) {
+
+                                    roleSystem.addRole(player.getName(), "Owner");
+
+                                    player.setPlayerListName(ChatColor.BLUE + "[" + ChatColor.LIGHT_PURPLE + "O" + ChatColor.RED + "w" + ChatColor.YELLOW + "n" + ChatColor.GREEN + "e" + ChatColor.BLUE + "r" + ChatColor.LIGHT_PURPLE + "] " + ChatColor.AQUA + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                }else if (highestRole.getName().equals("Admin")) {
+
+                                    roleSystem.addRole(player.getName(), "Admin");
+
+                                    player.setPlayerListName(ChatColor.RED + "[Admin] " + ChatColor.RED +  player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                }else if (highestRole.getName().equals("Head Admin")) {
+
+                                    roleSystem.addRole(player.getName(), "Head-Admin");
+
+                                    player.setPlayerListName(ChatColor.DARK_RED + "[Head-Admin] " + ChatColor.DARK_RED + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                }else if (highestRole.getName().equals("Builder")) {
+
+                                    roleSystem.addRole(player.getName(), "Builder");
+
+                                    player.setPlayerListName(ChatColor.AQUA + "[Builder] " + ChatColor.AQUA + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                }else if (highestRole.getName().equals("Server Booster")) {
+
+                                    roleSystem.addRole(player.getName(), "Server Booster");
+
+                                    player.setPlayerListName(ChatColor.LIGHT_PURPLE + "[Server Booster] " + ChatColor.LIGHT_PURPLE + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                } else if(highestRole.getName().equals("Faction Leader")) {
+
+                                    roleSystem.addRole(player.getName(), "Faction Leader");
+
+                                    player.setPlayerListName(ChatColor.DARK_PURPLE + "[Faction Leader] " + ChatColor.DARK_PURPLE + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                }else if(highestRole.getName().equals("Beta Tester")) {
+
+                                    roleSystem.addRole(player.getName(), "Beta Tester");
+
+                                    player.setPlayerListName(ChatColor.AQUA + "[Beta Tester] " + ChatColor.AQUA + player.getName());
+                                    player.sendMessage(ChatColor.GREEN + "[Verification] Roles Refreshed!");
+
+                                }else{
+                                    player.setPlayerListName(ChatColor.DARK_GRAY + "[Wastelander] " + ChatColor.DARK_GRAY + player.getName());
+
+                                    player.sendMessage(ChatColor.RED + "No role found other than the role: Wastelander . If you know you have a higher role please contact support at ");
+
+                                }
+
+                            }
+                        }
+
+                    });
 
 
                 }else {
@@ -428,12 +644,26 @@ public final class DiscordRolesPlugin extends JavaPlugin {
                 throw new RuntimeException(e);
             }
 
+            TextChannel channel = jda.getTextChannelById("1100491285124632677");
+
+
+
+            MessageEmbed embed = new EmbedBuilder()
+                    .setTitle("-- [Server] --")
+                    .setDescription("-- " + "***" +  "Server Shut Down!" + "***" + " --")
+                    .setFooter("-- --------------------------------- --")
+                    .setColor(Color.green)
+                    .build();
+
+            channel.sendMessageEmbeds(embed).queue();
+
 
 
 
         }
 
         // Shutdown JDA
+        discordPlayerJoin.jda.shutdown();
 
 
 
