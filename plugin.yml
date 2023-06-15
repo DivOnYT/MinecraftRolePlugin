@@ -1,0 +1,27 @@
+name: discordRolesPlugin
+version: '${project.version}'
+main: fr.div.nukamcplugin.DiscordRolesPlugin
+api-version: 1.16
+commands:
+  hello:
+    description: Say hello!
+  devannounce:
+    description: The server announces something!
+  tpspawn:
+    description: Teleports the player to spawn!
+  requestAdmin:
+    description: Request support from admins, please state a reason!
+  startverification:
+    description: authenticateds a discord user
+  verify:
+    description: Verifies the user by command.
+  refreshRoles:
+    description: Refreshes the users roles
+  manualverify:
+    description: Manually verifies a user
+  resetverifiedplayers:
+    description: Resets all verified players manually if there is more than one
+  refreshallroles:
+    description: Refreshes everbodys roles in the tab section, this is for testing only.
+  serverannounce:
+    description: Gives staff the ability to announce a message to everyone present in the server and in the discord.
