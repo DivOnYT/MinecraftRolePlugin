@@ -1,0 +1,1 @@
+Minecraft plugin to add the correct roles in the First Join.
