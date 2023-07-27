@@ -69,7 +69,7 @@ public final class DiscordRolesPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(onPlayerInteract, this);
         getLogger().info(ChatColor.GREEN + "-- --------------------------------- --");
         getLogger().info(ChatColor.BLUE + "-- DiscordRolesPlugin is enabled --");
-        getLogger().info(ChatColor.BLUE + "-- Author: HuggeTheDev --");
+        getLogger().info(ChatColor.BLUE + "-- Author: DivOnYT --");
         getLogger().info(ChatColor.GREEN + "-- --------------------------------- --");
 
 
