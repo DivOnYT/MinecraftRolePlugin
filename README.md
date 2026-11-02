@@ -2,7 +2,7 @@
 
 Plugin Spigot destiné à relier un serveur Minecraft à un serveur Discord afin d’associer les rôles Discord aux joueurs Minecraft. Il ajoute également des outils de modération, des annonces synchronisées avec Discord, un formatage du chat par rôle et quelques éléments d’interface propres au serveur NukaMC.
 
-> **État du projet :** prototype fonctionnel basé sur Spigot 1.16.x et JDA 5. Le fonctionnement décrit ci-dessous correspond à l’implémentation actuelle du code source.
+> **État du projet :** prototype fonctionnel basé sur Spigot 1.16.x et JDA 5.
 
 ## Fonctionnalités
 
@@ -119,7 +119,7 @@ Le fichier `build/DivPlugin-1.16.5.jar` est un artefact déjà compilé présent
 
 ## Configuration actuelle
 
-Le plugin ne possède pas encore de fichier `config.yml`. Les valeurs suivantes sont codées en dur :
+Les valeurs suivantes sont codées en dur :
 
 - token du bot Discord ;
 - identifiant du serveur Discord ;
@@ -160,5 +160,4 @@ plugin.yml
 Les dépendances ne sont pas gérées par Maven ou Gradle dans le dépôt actuel. Le fichier `.classpath` référence des JAR locaux propres à l’environnement de développement initial ; ces chemins doivent être adaptés avant une compilation sur une autre machine.
 
 ## Licence
-
-Aucune licence open source n’est indiquée dans le dépôt. Les conditions de réutilisation et de distribution doivent donc être clarifiées par le propriétaire du projet.
+License (License)
